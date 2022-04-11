@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
+  <link rel="stylesheet" href="./style.css">
+  <title>Admin - Seat stealer</title>
+</head>
+<body>
+  <div id="titleContainer">
+    <h1>Online Seat Stealer</h1>
+  </div>
+  <div id="seatContainer">
+    <div id="teacherContainer">
+      <div id="teacher" class="seatContainer">교탁</div>
+    </div>
+    <div id="studentContainer">
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+      <div class="seatColumn">
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+        <div class="seatContainer"></div>
+      </div>
+    </div>
+  </div>
+  <div id="controlContainer">
+    <div id="controlLight" class="gray">●</div>
+    <div id="controlText">
+      <span id="controlTitle">연결중..</span>
+      <span id="controlExplanation"></span>
+    </div>
+    <div id="nextButton">
+      <span id="random" class="hidden">나머지 랜덤 ❖</span>
+      <span id="next">진행 →</span>
+    </div>
+  </div>
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"></script>
+  <script type="module" src="./script.js"></script>
+</body>
+</html>

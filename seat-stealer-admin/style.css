@@ -1,0 +1,138 @@
+body {
+  font-family: "Pretendard Variable";
+  margin: 0;
+  padding: 0;
+}
+
+#titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 10vh;
+}
+
+#titleContainer > h1 {
+  font-size: 5vh;
+}
+
+#seatContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding: 2.5vh 4.5vw;
+  width: 100vw;
+  height: 65vh;
+}
+
+#teacherContainer {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+}
+
+.seatContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5vh;
+  color: black;
+  border-radius: 5px;
+  width: 10vw;
+  height: 6vh;
+  border: 1px solid #222;
+  margin-top: 1.9vh;
+  margin-bottom: 1.9vh;
+}
+
+#teacher {
+  font-weight: 700;
+  background-color: #eee;
+  border: 1px solid #999;
+}
+
+#studentContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50vh;
+}
+
+.seatColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 13vw;
+}
+
+#controlContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 3vh 5.5vw;
+  background-color: #ececec;
+  border-top: 1px solid #999;
+  line-height: 200%;
+  width: 100vw;
+  height: 25vh;
+}
+
+#controlExplanation {
+  font-weight: 400;
+}
+
+#controlLight {
+  font-size: 2vh;
+}
+
+#controlLight.red {
+  color: #f42c2c;
+}
+
+#controlLight.yellow {
+  color: #ebb428;
+}
+
+#controlLight.gray {
+  color: #888888;
+}
+
+#controlLight.green {
+  color: #3abd47;
+}
+
+#controlText {
+  margin-left: 0.5vw;
+  font-size: 2vh;
+  font-weight: 700;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+#nextButton {
+  font-size: 2vh;
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+#random {
+  margin-right: 1vw;
+}
+
+.hidden {
+  display: none;
+}
