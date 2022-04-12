@@ -5,6 +5,7 @@ const controlText = document.getElementById("controlText");
 const explanation = document.getElementById("explanation");
 const nameBox = document.getElementById("nameBox");
 const overlay = document.getElementById("overlay");
+const numBox = document.getElementById("numBox");
 const nextBtn = document.getElementById("next");
 const nameRegex = /^[가-힣]{2,4}$/;
 
@@ -49,6 +50,34 @@ socket.on("name-result", (result) => {
   }
 });
 
+socket.on("seat-vote-start", (num) => {
+  display = 2;
+  numBox.min = 1;
+  numBox.max = num;
+  nextBtn.textContent = "투표 →";
+  numBox.style.display = "initial";
+  nextBtn.style.display = "initial";
+  explanation.textContent = "원하는 자리의 번호를 입력하세요.";
+});
+
+socket.on("seat-voted", () => {
+  loadingHide();
+  display = 3;
+  numBox.style.display = "none";
+  nextBtn.style.display = "none";
+  explanation.innerHTML = `잠시만 기다려주세요.<br>내가 투표한 자리 - <b>${numBox.value}</b>`;
+});
+
+socket.on("seat-confirm", () => {
+  display = 4;
+  explanation.innerHTML = `축하합니다!<br><b>${numBox.value}번 자리</b> 확정`;
+});
+
+socket.on("seat-versus", (len) => {
+  display = 4;
+  explanation.innerHTML = `승부를 기다리고 있습니다<br>${numBox.value}번 자리 - <b>${len - 1}명</b>의 경쟁자`;
+});
+
 const next = () => {
   if (display == 0) {
     if (nameRegex.test(nameBox.value)) {
@@ -57,5 +86,19 @@ const next = () => {
     } else {
       alert("이름을 올바르게 입력하세요.");
     }
+  } else if (display == 2) {
+    if (numBox.value != "") {
+      loadingShow();
+      socket.emit("seat-vote", Number(numBox.value));
+    } else {
+      alert("숫자를 입력하세요.");
+    }
   }
+};
+
+const numCheck = () => {
+  let min = Number(numBox.min);
+  let max = Number(numBox.max);
+  if (numBox.value > max) numBox.value = max;
+  else if (numBox.value < min) numBox.value = min;
 };

@@ -55,6 +55,7 @@ body {
 }
 
 #explanation {
+  text-align: center;
   font-size: 2.5vh;
   font-weight: 400;
 }
@@ -112,4 +113,8 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+#numBox {
+  display: none;
 }

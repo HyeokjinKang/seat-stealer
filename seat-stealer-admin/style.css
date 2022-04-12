@@ -122,11 +122,17 @@ body {
   justify-content: flex-start;
 }
 
-#nextButton {
+.nextButton {
   font-size: 2vh;
   white-space: nowrap;
   cursor: pointer;
   font-weight: 700;
+}
+
+#nextBtn.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: default;
 }
 
 #random {
@@ -135,4 +141,8 @@ body {
 
 .hidden {
   display: none;
+}
+
+.nameBlue {
+  color: #126cad;
 }
