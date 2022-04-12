@@ -7,6 +7,20 @@ const controlLight = document.getElementById("controlLight");
 const controlTitle = document.getElementById("controlTitle");
 const controlExplanation = document.getElementById("controlExplanation");
 
+const titleLoop = new Howl({
+  src: ["./musics/title.mp3"],
+  autoplay: false,
+  loop: true,
+  volume: 0.5,
+});
+
+const voteLoop = new Howl({
+  src: ["./musics/vote-loop.mp3"],
+  autoplay: false,
+  loop: true,
+  volume: 0.5,
+});
+
 let seats;
 let studentCount = config.studentCount,
   students = config.students,
@@ -65,15 +79,20 @@ const resultShow = (num) => {
     } else {
       seats[n].style.backgroundColor = "#DEF3FF";
     }
-  }, 10);
+  }, 20);
   if (num != remain.length - 1) {
     setTimeout(() => {
       resultShow(num + 1);
-    }, 500);
+    }, 300);
   } else {
     nextBtn.classList.remove("disabled");
     nextBtn.textContent = "진행 →";
   }
+};
+
+const start = () => {
+  titleLoop.play();
+  document.getElementById("overlayContainer").style.display = "none";
 };
 
 const next = () => {
@@ -84,12 +103,23 @@ const next = () => {
     title.textContent = "원하는 자리에 투표해주세요.";
     socket.emit("seat-vote-start", config.studentCount);
     statusUpdate(display);
+    titleLoop.fade(0.5, 0, 1000);
+    setTimeout(() => {
+      titleLoop.stop();
+      voteLoop.play();
+    }, 1000);
   } else if (display == 1) {
+    voteLoop.fade(0.5, 0, 1000);
     display = 2;
     nextBtn.classList.add("disabled");
     nextBtn.textContent = "대기중 →";
     title.textContent = "1차 투표 결과";
-    resultShow(0);
+    setTimeout(() => {
+      voteLoop.stop();
+      setTimeout(() => {
+        resultShow(0);
+      }, 2000);
+    }, 1000);
   }
 };
 

@@ -100,5 +100,5 @@ const numCheck = () => {
   let min = Number(numBox.min);
   let max = Number(numBox.max);
   if (numBox.value > max) numBox.value = max;
-  else if (numBox.value < min) numBox.value = min;
+  else if (numBox.value < min && numBox.value != "") numBox.value = min;
 };
