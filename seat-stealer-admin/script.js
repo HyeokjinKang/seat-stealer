@@ -21,6 +21,13 @@ const voteLoop = new Howl({
   volume: 0.5,
 });
 
+const resultLoop = new Howl({
+  src: ["./musics/result.mp3"],
+  autoplay: false,
+  loop: true,
+  volume: 0.5,
+});
+
 let seats;
 let studentCount = config.studentCount,
   students = config.students,
@@ -128,7 +135,10 @@ const next = () => {
     setTimeout(() => {
       voteLoop.stop();
       setTimeout(() => {
-        resultShow(0);
+        resultLoop.play();
+        setTimeout(() => {
+          resultShow(0);
+        }, 200);
       }, 2000);
     }, 1000);
   }
