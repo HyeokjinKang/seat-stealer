@@ -87,6 +87,7 @@ body {
   line-height: 200%;
   width: 100vw;
   height: 25vh;
+  transition-duration: 1s;
 }
 
 #controlExplanation {

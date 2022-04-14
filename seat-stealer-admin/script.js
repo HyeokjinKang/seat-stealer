@@ -7,7 +7,9 @@ const fightSeat = document.getElementById("fightSeat");
 const fightStudent = document.getElementById("fightStudent");
 const controlLight = document.getElementById("controlLight");
 const controlTitle = document.getElementById("controlTitle");
+const seatContainer = document.getElementById("seatContainer");
 const fightContainer = document.getElementById("fightContainer");
+const controlContainer = document.getElementById("controlContainer");
 const controlExplanation = document.getElementById("controlExplanation");
 
 const titleLoop = new Howl({
@@ -188,6 +190,8 @@ const next = () => {
       for (let i = 1; i <= config.studentCount; i++) {
         seats[i].style.borderColor = "#000";
       }
+      seatContainer.style.height = "75vh";
+      controlContainer.style.marginTop = "15vh";
       title.textContent = "최종 결과";
     }
   }
