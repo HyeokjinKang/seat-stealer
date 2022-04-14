@@ -71,6 +71,7 @@ socket.on("seat-voted", () => {
 socket.on("seat-confirm", () => {
   display = 4;
   explanation.innerHTML = `축하합니다!<br><b>${numBox.value}번 자리</b> 확정`;
+  socket.close();
 });
 
 socket.on("seat-versus", (len) => {

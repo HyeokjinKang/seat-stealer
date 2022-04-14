@@ -85,8 +85,14 @@ const resultShow = (num) => {
       resultShow(num + 1);
     }, 300);
   } else {
+    for (let i = 0; i < filled.length; i++) {
+      remain.splice(filled[i] - 1, 1);
+    }
+    filled = [];
+    studentCount = remain.length;
     nextBtn.classList.remove("disabled");
     nextBtn.textContent = "진행 →";
+    statusUpdate(0);
   }
 };
 
