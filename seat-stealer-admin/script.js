@@ -35,7 +35,7 @@ const lightChange = (light) => {
   controlLight.className = light;
 };
 
-const statusUpdate = (display) => {
+const statusUpdate = (dnum) => {
   const ids = Object.keys(names);
   if (ids.length == studentCount) lightChange("green");
   else lightChange("yellow");
@@ -43,13 +43,13 @@ const statusUpdate = (display) => {
   let text = "";
   for (let i = 0; i < ids.length; i++) {
     let name = names[ids[i]];
-    text += `${voted.indexOf(name) != -1 ? "<span class='nameBlue'>" : ""}${names[ids[i]]}${i + 1 == ids.length ? "" : ", "}${voted.indexOf(name) != -1 ? "</span>" : ""}`;
+    text += `<span class="names${voted.indexOf(name) != -1 ? " nameBlue" : ""}" onclick="delStudent(${i})">${names[ids[i]]}</span>${i + 1 == ids.length ? "" : ", "}`;
   }
   controlExplanation.innerHTML = text;
 
-  if (display == 0) {
+  if (dnum == 0) {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}`;
-  } else if (display == 1) {
+  } else if (dnum == 1) {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${studentCount}`;
   }
 };
