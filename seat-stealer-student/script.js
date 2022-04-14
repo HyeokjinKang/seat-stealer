@@ -87,9 +87,9 @@ socket.on("seat-vote-failed", () => {
   alert("빈 자리를 입력하세요.");
 });
 
-socket.on("seat-confirm", () => {
+socket.on("seat-confirm", (num) => {
   display = 4;
-  explanation.innerHTML = `축하합니다!<br><b>${numBox.value}번 자리</b> 확정`;
+  explanation.innerHTML = `축하합니다!<br><b>${num}번 자리</b> 확정`;
   socket.close();
 });
 

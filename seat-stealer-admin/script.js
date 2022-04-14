@@ -1,7 +1,7 @@
 const socket = io("https://seat-socket.coupy.dev");
 
 const title = document.getElementById("title");
-const random = document.getElementById("random");
+const randomBtn = document.getElementById("random");
 const nextBtn = document.getElementById("nextBtn");
 const fightSeat = document.getElementById("fightSeat");
 const fightStudent = document.getElementById("fightStudent");
@@ -95,7 +95,7 @@ const resultShow = (num) => {
         seats[n].textContent = `${seatVote[n].length}명`;
         seats[n].style.backgroundColor = "#FFE8E8";
       } else {
-        socket.emit("seat-confirm", seatVote[n][0]);
+        socket.emit("seat-confirm", seatVote[n][0], n);
         studentCount--;
         filled.push(n);
         seats[n].textContent = names[seatVote[n][0]];
@@ -172,7 +172,7 @@ const next = () => {
   } else if (display == 3) {
     display = 4;
     nextBtn.classList.remove("disabled");
-    if (remain.length) random.classList.remove("hidden");
+    if (remain.length) randomBtn.classList.remove("hidden");
     title.textContent = `${attempt}차 배치 결과`;
     nextBtn.textContent = "진행 →";
   } else if (display == 4) {
@@ -181,7 +181,7 @@ const next = () => {
       resultLoop.stop();
     }, 1000);
     if (remain.length) {
-      random.classList.add("hidden");
+      randomBtn.classList.add("hidden");
       voted = [];
       seatVote = {};
       display = 0;
@@ -195,6 +195,18 @@ const next = () => {
       title.textContent = "최종 결과";
     }
   }
+};
+
+const random = () => {
+  randomBtn.classList.add("hidden");
+  const ids = Object.keys(names);
+  seatVote = {};
+  for (let i = 0; i < remain.length; i++) {
+    const target = Math.floor(Math.random() * ids.length);
+    seatVote[remain[i]] = [ids[target]];
+    ids.splice(target, 1);
+  }
+  resultShow(0);
 };
 
 const fightNext = () => {
@@ -215,7 +227,7 @@ const fightNext = () => {
     if (remain.length == 1) {
       const keys = Object.keys(names);
       seats[remain[0]].textContent = names[keys[0]];
-      socket.emit("seat-confirm", keys[0]);
+      socket.emit("seat-confirm", keys[0], remain[0]);
       remain = [];
     }
     filled = [];
@@ -234,7 +246,7 @@ const winStudent = (n) => {
     seats[target].style.backgroundColor = "#fff";
     seats[target].style.color = "#000";
     seats[target].style.borderColor = "#df3737";
-    socket.emit("seat-confirm", seatVote[target][n]);
+    socket.emit("seat-confirm", seatVote[target][n], target);
     seats[target].textContent = names[seatVote[target][n]];
     filled.push(target);
     seatVote[target].splice(n, 1);
