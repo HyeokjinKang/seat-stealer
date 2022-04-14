@@ -59,7 +59,7 @@ socket.on("name-result", (result) => {
     nextBtn.style.display = "none";
     explanation.textContent = "잠시만 기다려주세요.";
   } else {
-    alert("잘못된 학생 이름이거나 이미 접속한 상태입니다.");
+    alert("잘못된 학생 이름이거나 이미 접속한 상태입니다.\n이미 시작된 투표에도 참여가 불가능합니다.");
   }
 });
 

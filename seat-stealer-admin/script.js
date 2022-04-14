@@ -161,7 +161,7 @@ socket.on("connected-admin", () => {
 
 socket.on("name-submit", (name, id) => {
   let result = false;
-  if (students.indexOf(name) != -1 && !names[id]) {
+  if (students.indexOf(name) != -1 && !names[id] && display == 0) {
     names[id] = name;
     result = true;
     statusUpdate(display);
