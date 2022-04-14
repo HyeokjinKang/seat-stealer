@@ -34,9 +34,11 @@ let studentCount = config.studentCount,
   display = 0,
   names = {};
 let voted = [],
-  seatVote = {};
+  seatVote = {},
+  seatFight = [];
 let remain = [];
 let filled = [];
+let attempt = 0;
 
 const lightChange = (light) => {
   controlLight.className = light;
@@ -44,10 +46,8 @@ const lightChange = (light) => {
 
 const statusUpdate = (dnum) => {
   const ids = Object.keys(names);
-  if (ids.length == studentCount) lightChange("green");
-  else lightChange("yellow");
-
   let text = "";
+
   for (let i = 0; i < ids.length; i++) {
     let name = names[ids[i]];
     text += `<span class="names${voted.indexOf(name) != -1 ? " nameBlue" : ""}" onclick="delStudent(${i})">${names[ids[i]]}</span>${i + 1 == ids.length ? "" : ", "}`;
@@ -58,6 +58,15 @@ const statusUpdate = (dnum) => {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}`;
   } else if (dnum == 1) {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${studentCount}`;
+  }
+
+  if (studentCount <= 0) {
+    lightChange("gray");
+    controlTitle.textContent = "종료됨";
+  } else if (ids.length == studentCount) {
+    lightChange("green");
+  } else {
+    lightChange("yellow");
   }
 };
 
@@ -79,6 +88,7 @@ const resultShow = (num) => {
         for (let i = 0; i < seatVote[n].length; i++) {
           socket.emit("seat-versus", seatVote[n][i], seatVote[n].length);
         }
+        seatFight.push(n);
         seats[n].textContent = `${seatVote[n].length}명`;
         seats[n].style.backgroundColor = "#FFE8E8";
       } else {
@@ -97,11 +107,10 @@ const resultShow = (num) => {
       resultShow(num + 1);
     }, 300);
   } else {
-    for (let i = 0; i < filled.length; i++) {
+    for (let i = 0; i <= filled.length; i++) {
       remain.splice(filled[i] - 1, 1);
     }
     filled = [];
-    studentCount = remain.length;
     nextBtn.classList.remove("disabled");
     nextBtn.textContent = "진행 →";
     statusUpdate(0);
@@ -136,11 +145,23 @@ const next = () => {
       voteLoop.stop();
       setTimeout(() => {
         resultLoop.play();
-        setTimeout(() => {
-          resultShow(0);
-        }, 200);
-      }, 2000);
+        resultShow(0);
+      }, 1000);
     }, 1000);
+  } else if (display == 2) {
+    display = 3;
+    attempt++;
+    resultLoop.fade(0.5, 0, 500);
+    if (seatFight.length) {
+      nextBtn.classList.add("disabled");
+      nextBtn.textContent = "대기중 →";
+      title.textContent = "승부의 시간";
+    } else {
+      next();
+    }
+  } else if (display == 3) {
+    display = 4;
+    title.textContent = `${attempt}차 배치 결과`;
   }
 };
 
