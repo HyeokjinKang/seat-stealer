@@ -188,6 +188,7 @@ const next = () => {
       next();
     } else {
       for (let i = 1; i <= config.studentCount; i++) {
+        seats[i].style.backgroundColor = "#fff";
         seats[i].style.borderColor = "#000";
       }
       seatContainer.style.height = "75vh";
