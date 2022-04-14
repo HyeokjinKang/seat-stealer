@@ -3,8 +3,11 @@ const socket = io("https://seat-socket.coupy.dev");
 const title = document.getElementById("title");
 const random = document.getElementById("random");
 const nextBtn = document.getElementById("nextBtn");
+const fightSeat = document.getElementById("fightSeat");
+const fightStudent = document.getElementById("fightStudent");
 const controlLight = document.getElementById("controlLight");
 const controlTitle = document.getElementById("controlTitle");
+const fightContainer = document.getElementById("fightContainer");
 const controlExplanation = document.getElementById("controlExplanation");
 
 const titleLoop = new Howl({
@@ -85,9 +88,7 @@ const resultShow = (num) => {
     seats[n].style.color = "#000";
     if (seatVote[n]) {
       if (seatVote[n].length > 1) {
-        for (let i = 0; i < seatVote[n].length; i++) {
-          socket.emit("seat-versus", seatVote[n][i], seatVote[n].length);
-        }
+        socket.emit("seat-versus", seatVote[n], seatVote[n].length);
         seatFight.push(n);
         seats[n].textContent = `${seatVote[n].length}명`;
         seats[n].style.backgroundColor = "#FFE8E8";
@@ -101,20 +102,21 @@ const resultShow = (num) => {
     } else {
       seats[n].style.backgroundColor = "#DEF3FF";
     }
-  }, 20);
-  if (num != remain.length - 1) {
-    setTimeout(() => {
-      resultShow(num + 1);
-    }, 300);
-  } else {
-    for (let i = 0; i <= filled.length; i++) {
-      remain.splice(filled[i] - 1, 1);
+
+    if (num != remain.length - 1) {
+      setTimeout(() => {
+        resultShow(num + 1);
+      }, 250);
+    } else {
+      for (let i = 0; i < filled.length; i++) {
+        remain.splice(remain.indexOf(filled[i]), 1);
+      }
+      filled = [];
+      nextBtn.classList.remove("disabled");
+      nextBtn.textContent = "진행 →";
+      statusUpdate(0);
     }
-    filled = [];
-    nextBtn.classList.remove("disabled");
-    nextBtn.textContent = "진행 →";
-    statusUpdate(0);
-  }
+  }, 20);
 };
 
 const start = () => {
@@ -133,36 +135,116 @@ const next = () => {
     titleLoop.fade(0.5, 0, 1000);
     setTimeout(() => {
       titleLoop.stop();
+      voteLoop.volume(0.5);
       voteLoop.play();
     }, 1000);
   } else if (display == 1) {
     voteLoop.fade(0.5, 0, 1000);
     display = 2;
+    attempt++;
     nextBtn.classList.add("disabled");
     nextBtn.textContent = "대기중 →";
-    title.textContent = "1차 투표 결과";
+    title.textContent = `${attempt}차 투표 결과`;
     setTimeout(() => {
       voteLoop.stop();
       setTimeout(() => {
+        resultLoop.volume(0.5);
         resultLoop.play();
         resultShow(0);
       }, 1000);
     }, 1000);
   } else if (display == 2) {
     display = 3;
-    attempt++;
-    resultLoop.fade(0.5, 0, 500);
     if (seatFight.length) {
       nextBtn.classList.add("disabled");
       nextBtn.textContent = "대기중 →";
       title.textContent = "승부의 시간";
+      fightNext();
     } else {
+      voteLoop.fade(0.5, 0, 1000);
+      setTimeout(() => {
+        voteLoop.stop();
+      }, 1000);
       next();
     }
   } else if (display == 3) {
     display = 4;
+    nextBtn.classList.remove("disabled");
+    if (remain.length) random.classList.remove("hidden");
     title.textContent = `${attempt}차 배치 결과`;
+    nextBtn.textContent = "진행 →";
+  } else if (display == 4) {
+    resultLoop.fade(0.5, 0, 1000);
+    setTimeout(() => {
+      resultLoop.stop();
+    }, 1000);
+    if (remain.length) {
+      random.classList.add("hidden");
+      voted = [];
+      seatVote = {};
+      display = 0;
+      next();
+    } else {
+      for (let i = 1; i <= config.studentCount; i++) {
+        seats[i].style.borderColor = "#000";
+      }
+      title.textContent = "최종 결과";
+    }
   }
+};
+
+const fightNext = () => {
+  if (seatFight.length) {
+    const target = seatFight[0];
+    fightSeat.textContent = `${target}번 자리`;
+    let text = "";
+    for (let i = 0; i < seatVote[target].length; i++) {
+      socket.emit("seat-fight", seatVote[target][i]);
+      text += `<span class="fightName" onclick="winStudent(${i})">${names[seatVote[target][i]]}</span>${i + 1 == seatVote[target].length ? "" : ", "}`;
+    }
+    fightStudent.innerHTML = text;
+    fightContainer.className = "show";
+  } else {
+    for (let i = 0; i < filled.length; i++) {
+      remain.splice(remain.indexOf(filled[i]), 1);
+    }
+    if (remain.length == 1) {
+      const keys = Object.keys(names);
+      seats[remain[0]].textContent = names[keys[0]];
+      socket.emit("seat-confirm", keys[0]);
+      remain = [];
+    }
+    filled = [];
+    next();
+  }
+};
+
+const winStudent = (n) => {
+  fightContainer.classList.add("hide");
+  const target = seatFight[0];
+  seats[target].style.transitionDuration = "0s";
+  seats[target].style.backgroundColor = "#000";
+  seats[target].style.color = "#fff";
+  setTimeout(() => {
+    seats[target].style.transitionDuration = "1s";
+    seats[target].style.backgroundColor = "#fff";
+    seats[target].style.color = "#000";
+    seats[target].style.borderColor = "#df3737";
+    socket.emit("seat-confirm", seatVote[target][n]);
+    seats[target].textContent = names[seatVote[target][n]];
+    filled.push(target);
+    seatVote[target].splice(n, 1);
+    socket.emit("seat-wait", seatVote[target]);
+    studentCount--;
+  }, 20);
+  setTimeout(() => {
+    statusUpdate(0);
+    fightContainer.className = "";
+    seatFight.splice(0, 1);
+    setTimeout(() => {
+      fightNext();
+    }, 50);
+  }, 500);
 };
 
 socket.on("reload", () => {
@@ -181,8 +263,9 @@ socket.on("connected-admin", () => {
 });
 
 socket.on("name-submit", (name, id) => {
+  const nameArr = Object.values(names);
   let result = false;
-  if (students.indexOf(name) != -1 && !names[id] && display == 0) {
+  if (students.indexOf(name) != -1 && nameArr.indexOf(name) == -1 && display == 0) {
     names[id] = name;
     result = true;
     statusUpdate(display);
@@ -196,17 +279,21 @@ socket.on("name-remove", (id) => {
 });
 
 socket.on("seat-vote", (n, id) => {
-  if (seatVote[n]) {
-    seatVote[n].push(id);
+  if (remain.indexOf(n) != -1) {
+    if (seatVote[n]) {
+      seatVote[n].push(id);
+    } else {
+      seatVote[n] = [id];
+    }
+    voted.push(names[id]);
+    socket.emit("seat-voted", id);
+    statusUpdate(display);
+    if (voted.length == studentCount) {
+      nextBtn.classList.remove("disabled");
+      nextBtn.textContent = "진행 →";
+    }
   } else {
-    seatVote[n] = [id];
-  }
-  voted.push(names[id]);
-  socket.emit("seat-voted", id);
-  statusUpdate(display);
-  if (voted.length == studentCount) {
-    nextBtn.classList.remove("disabled");
-    nextBtn.textContent = "진행 →";
+    socket.emit("seat-vote-failed", id);
   }
 });
 

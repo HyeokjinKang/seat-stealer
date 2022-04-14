@@ -13,6 +13,16 @@
   <div id="overlayContainer" onclick="start()">
     <span><b>아무 곳이나 클릭하면 프로그램이 시작됩니다.</b><br>음량을 미리 조정한 후에 시작해주세요.</span>
   </div>
+  <div id="fightContainer">
+    <div id="fightContentContainer">
+      <div class="fightLine"></div>
+      <div id="fightContent">
+        <span id="fightSeat"></span>
+        <span id="fightStudent"></span>
+      </div>
+      <div class="fightLine"></div>
+    </div>
+  </div>
   <div id="titleContainer">
     <h1 id="title">Online Seat Stealer</h1>
   </div>
@@ -77,7 +87,7 @@
       <span id="controlTitle">연결중..</span>
       <span id="controlExplanation"></span>
     </div>
-    <div>
+    <div id="controlButtons">
       <span id="random" class="nextButton hidden" onclick="random()">나머지 랜덤 ❖</span>
       <span id="nextBtn" class="nextButton" onclick="next()">진행 →</span>
     </div>

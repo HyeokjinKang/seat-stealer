@@ -71,6 +71,7 @@ socket.on("seat-vote-start", (num) => {
   numBox.style.display = "initial";
   nextBtn.style.display = "initial";
   explanation.textContent = "원하는 자리의 번호를 입력하세요.";
+  numBox.value = "";
 });
 
 socket.on("seat-voted", () => {
@@ -79,6 +80,11 @@ socket.on("seat-voted", () => {
   numBox.style.display = "none";
   nextBtn.style.display = "none";
   explanation.innerHTML = `잠시만 기다려주세요.<br>내가 투표한 자리 - <b>${numBox.value}</b>`;
+});
+
+socket.on("seat-vote-failed", () => {
+  loadingHide();
+  alert("빈 자리를 입력하세요.");
 });
 
 socket.on("seat-confirm", () => {
@@ -90,6 +96,14 @@ socket.on("seat-confirm", () => {
 socket.on("seat-versus", (len) => {
   display = 4;
   explanation.innerHTML = `승부를 기다리고 있습니다<br>${numBox.value}번 자리 - <b>${len - 1}명</b>의 경쟁자`;
+});
+
+socket.on("seat-fight", () => {
+  explanation.innerHTML = `승부의 시간!<br>자리에서 일어나서 가위바위보를 하세요.`;
+});
+
+socket.on("seat-wait", () => {
+  explanation.innerHTML = "다음 투표를 기다리는 중..";
 });
 
 const next = () => {

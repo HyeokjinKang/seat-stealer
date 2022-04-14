@@ -1,4 +1,5 @@
 body {
+  overflow: hidden;
   font-family: "Pretendard Variable";
   margin: 0;
   padding: 0;
@@ -20,11 +21,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   box-sizing: border-box;
   padding: 2.5vh 4.5vw;
   width: 100vw;
   height: 65vh;
+  transition-duration: 1s;
 }
 
 #teacherContainer {
@@ -122,6 +124,11 @@ body {
   justify-content: flex-start;
 }
 
+#controlButtons {
+  display: flex;
+  flex-direction: row;
+}
+
 .nextButton {
   font-size: 2vh;
   white-space: nowrap;
@@ -169,4 +176,71 @@ body {
   color: #222;
   font-size: 3vh;
   font-weight: 400;
+}
+
+#fightContainer {
+  position: fixed;
+  top: 0;
+  left: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  transition-duration: 0s;
+}
+
+#fightContainer.show {
+  transition-duration: 0.5s;
+  left: 0vw;
+}
+
+#fightContainer.hide {
+  opacity: 0;
+}
+
+#fightContentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  width: 100vw;
+  height: 60vh;
+  margin-bottom: 15vh;
+}
+
+.fightLine {
+  width: 100vw;
+  height: 0.5vh;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  background: linear-gradient(to right, #da5ff9, #458fff);
+}
+
+#fightContent {
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#fightSeat {
+  font-size: 3vh;
+  margin-bottom: 1vh;
+}
+
+#fightStudent {
+  font-size: 5vh;
+}
+
+.fightName {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.fightName:hover {
+  text-decoration: underline;
 }
