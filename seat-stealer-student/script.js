@@ -33,6 +33,19 @@ socket.on("connect", () => {
   socket.emit("student");
 });
 
+socket.on("disconnect", () => {
+  lightChange("gray", "종료됨");
+});
+
+socket.on("removed", () => {
+  display = -1;
+  nameBox.style.display = "none";
+  nextBtn.style.display = "none";
+  explanation.textContent = "관리자가 연결을 끊었습니다.";
+  lightChange("gray", "종료됨");
+  socket.close();
+});
+
 socket.on("connected-student", () => {
   lightChange("green", "연결됨");
   console.log("Connected as student");

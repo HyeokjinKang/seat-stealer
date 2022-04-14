@@ -143,6 +143,14 @@ body {
   display: none;
 }
 
+.names {
+  cursor: pointer;
+}
+
+.names:hover {
+  text-decoration: underline;
+}
+
 .nameBlue {
   color: #126cad;
 }

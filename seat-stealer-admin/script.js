@@ -54,6 +54,11 @@ const statusUpdate = (dnum) => {
   }
 };
 
+const delStudent = (n) => {
+  const ids = Object.keys(names);
+  socket.emit("removed", ids[n]);
+};
+
 const resultShow = (num) => {
   n = remain[num];
   seats[n].style.transitionDuration = "0s";
