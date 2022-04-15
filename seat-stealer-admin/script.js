@@ -62,10 +62,10 @@ const statusUpdate = (dnum) => {
   if (dnum == 0) {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}`;
   } else if (dnum == 1) {
-    controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${studentCount}`;
+    controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${ids.length}`;
   }
 
-  if (studentCount <= 0) {
+  if (ids.length <= 0) {
     lightChange("gray");
     controlTitle.textContent = "종료됨";
   } else if (ids.length == studentCount) {
@@ -305,7 +305,7 @@ socket.on("seat-vote", (n, id) => {
     voted.push(names[id]);
     socket.emit("seat-voted", id);
     statusUpdate(display);
-    if (voted.length == studentCount) {
+    if (voted.length == Object.keys(names).length) {
       nextBtn.classList.remove("disabled");
       nextBtn.textContent = "진행 →";
     }
