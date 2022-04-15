@@ -130,3 +130,9 @@ const numCheck = () => {
   if (numBox.value > max) numBox.value = max;
   else if (numBox.value < min && numBox.value != "") numBox.value = min;
 };
+
+const isEnter = () => {
+  if (window.event.keyCode == 13) {
+    next();
+  }
+};

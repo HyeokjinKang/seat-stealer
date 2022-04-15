@@ -16,8 +16,8 @@
   </div>
   <div id="contentsContainer">
     <span id="explanation">이름을 입력하세요.</span>
-    <input type="text" class="textbox" id="nameBox" placeholder="ㅇㅇㅇ">
-    <input type="number" class="textbox" id="numBox" placeholder="00" onkeyup="numCheck()" onblur="numCheck()">
+    <input type="text" class="textbox" id="nameBox" onkeydown="isEnter()" placeholder="ㅇㅇㅇ">
+    <input type="number" class="textbox" id="numBox" placeholder="00" onkeydown="isEnter()" onkeyup="numCheck()" onblur="numCheck()">
     <span id="next" onclick="next()">접속 →</span>
   </div>
   <div id="statusContainer">
