@@ -108,7 +108,7 @@ const resultShow = (num) => {
     if (num != remain.length - 1) {
       setTimeout(() => {
         resultShow(num + 1);
-      }, 250);
+      }, 200);
     } else {
       for (let i = 0; i < filled.length; i++) {
         remain.splice(remain.indexOf(filled[i]), 1);
@@ -180,7 +180,7 @@ const next = () => {
     setTimeout(() => {
       resultLoop.stop();
     }, 1000);
-    if (remain.length) {
+    if (Object.keys(names).length) {
       randomBtn.classList.add("hidden");
       voted = [];
       seatVote = {};
@@ -263,11 +263,6 @@ const winStudent = (n) => {
     }, 50);
   }, 500);
 };
-
-socket.on("reload", () => {
-  isForcedReload++;
-  location.reload();
-});
 
 socket.on("connect", () => {
   socket.emit("admin");
