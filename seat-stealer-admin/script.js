@@ -16,21 +16,28 @@ const titleLoop = new Howl({
   src: ["./musics/title.mp3"],
   autoplay: false,
   loop: true,
-  volume: 0.5,
+  volume: 1,
 });
 
 const voteLoop = new Howl({
-  src: ["./musics/vote-loop.mp3"],
+  src: ["./musics/vote.mp3"],
   autoplay: false,
   loop: true,
-  volume: 0.5,
+  volume: 0,
 });
 
 const resultLoop = new Howl({
   src: ["./musics/result.mp3"],
   autoplay: false,
   loop: true,
-  volume: 0.5,
+  volume: 1,
+});
+
+const finalLoop = new Howl({
+  src: ["./musics/final.mp3"],
+  autoplay: false,
+  loop: true,
+  volume: 1,
 });
 
 let seats;
@@ -108,7 +115,7 @@ const resultShow = (num) => {
     if (num != remain.length - 1) {
       setTimeout(() => {
         resultShow(num + 1);
-      }, 200);
+      }, 150);
     } else {
       for (let i = 0; i < filled.length; i++) {
         remain.splice(remain.indexOf(filled[i]), 1);
@@ -123,6 +130,7 @@ const resultShow = (num) => {
 
 const start = () => {
   titleLoop.play();
+  voteLoop.play();
   document.getElementById("overlayContainer").style.display = "none";
 };
 
@@ -134,26 +142,19 @@ const next = () => {
     title.textContent = "원하는 자리에 투표해주세요.";
     socket.emit("seat-vote-start", config.studentCount);
     statusUpdate(display);
-    titleLoop.fade(0.5, 0, 1000);
-    setTimeout(() => {
-      titleLoop.stop();
-      voteLoop.volume(0.5);
-      voteLoop.play();
-    }, 1000);
+    titleLoop.fade(1, 0, 1000);
+    voteLoop.fade(0, 1, 1000);
   } else if (display == 1) {
-    voteLoop.fade(0.5, 0, 1000);
+    voteLoop.fade(1, 0, 1000);
+    resultLoop.play();
+    resultLoop.fade(0, 1, 1000);
     display = 2;
     attempt++;
     nextBtn.classList.add("disabled");
     nextBtn.textContent = "대기중 →";
     title.textContent = `${attempt}차 투표 결과`;
     setTimeout(() => {
-      voteLoop.stop();
-      setTimeout(() => {
-        resultLoop.volume(0.5);
-        resultLoop.play();
-        resultShow(0);
-      }, 1000);
+      resultShow(0);
     }, 1000);
   } else if (display == 2) {
     display = 3;
@@ -163,10 +164,6 @@ const next = () => {
       title.textContent = "승부의 시간";
       fightNext();
     } else {
-      voteLoop.fade(0.5, 0, 1000);
-      setTimeout(() => {
-        voteLoop.stop();
-      }, 1000);
       next();
     }
   } else if (display == 3) {
@@ -176,7 +173,7 @@ const next = () => {
     title.textContent = `${attempt}차 배치 결과`;
     nextBtn.textContent = "진행 →";
   } else if (display == 4) {
-    resultLoop.fade(0.5, 0, 1000);
+    resultLoop.fade(1, 0, 1000);
     setTimeout(() => {
       resultLoop.stop();
     }, 1000);
@@ -187,6 +184,8 @@ const next = () => {
       display = 0;
       next();
     } else {
+      finalLoop.play();
+      finalLoop.fade(0, 1, 1000);
       for (let i = 1; i <= config.studentCount; i++) {
         seats[i].style.backgroundColor = "#fff";
         seats[i].style.borderColor = "#000";
