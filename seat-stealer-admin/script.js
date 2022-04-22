@@ -72,7 +72,7 @@ const statusUpdate = (dnum) => {
     controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${ids.length}`;
   }
 
-  if (ids.length <= 0) {
+  if (ids.length <= 0 && display != 0) {
     lightChange("gray");
     controlTitle.textContent = "종료됨";
   } else if (ids.length == studentCount) {
@@ -115,7 +115,7 @@ const resultShow = (num) => {
     if (num != remain.length - 1) {
       setTimeout(() => {
         resultShow(num + 1);
-      }, 150);
+      }, 100);
     } else {
       for (let i = 0; i < filled.length; i++) {
         remain.splice(remain.indexOf(filled[i]), 1);
@@ -142,19 +142,27 @@ const next = () => {
     title.textContent = "원하는 자리에 투표해주세요.";
     socket.emit("seat-vote-start", config.studentCount);
     statusUpdate(display);
-    titleLoop.fade(1, 0, 1000);
-    voteLoop.fade(0, 1, 1000);
+    if (titleLoop.volume()) {
+      titleLoop.fade(1, 0, 1000);
+      voteLoop.fade(0, 1, 1000);
+    } else {
+      setTimeout(() => {
+        voteLoop.fade(0, 1, 1000);
+      }, 1000);
+    }
   } else if (display == 1) {
     voteLoop.fade(1, 0, 1000);
-    resultLoop.play();
-    resultLoop.fade(0, 1, 1000);
-    display = 2;
-    attempt++;
-    nextBtn.classList.add("disabled");
-    nextBtn.textContent = "대기중 →";
-    title.textContent = `${attempt}차 투표 결과`;
     setTimeout(() => {
-      resultShow(0);
+      resultLoop.play();
+      resultLoop.fade(0, 1, 1000);
+      display = 2;
+      attempt++;
+      nextBtn.classList.add("disabled");
+      nextBtn.textContent = "대기중 →";
+      title.textContent = `${attempt}차 투표 결과`;
+      setTimeout(() => {
+        resultShow(0);
+      }, 1000);
     }, 1000);
   } else if (display == 2) {
     display = 3;
@@ -173,7 +181,7 @@ const next = () => {
     title.textContent = `${attempt}차 배치 결과`;
     nextBtn.textContent = "진행 →";
   } else if (display == 4) {
-    resultLoop.fade(1, 0, 1000);
+    resultLoop.fade(0.5, 0, 1000);
     setTimeout(() => {
       resultLoop.stop();
     }, 1000);
