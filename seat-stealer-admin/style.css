@@ -45,10 +45,47 @@ body {
   color: black;
   border-radius: 5px;
   width: 10vw;
-  height: 6vh;
+  height: 5.5vh;
   border: 1px solid #222;
   margin-top: 1.9vh;
   margin-bottom: 1.9vh;
+}
+
+.partnerL > .seatContainer {
+  width: 8vw;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.partnerR > .seatContainer {
+  width: 8vw;
+  border-radius: 0px 5px 5px 0px;
+}
+
+.standContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5vh;
+  color: black;
+  border-radius: 5px;
+  width: 10vw;
+  height: 5.5vh;
+  border: 1px solid #222;
+  margin-top: 1.9vh;
+  margin-bottom: 1.9vh;
+  background-color: #eee;
+}
+
+.standContainer.marginLeft {
+  margin-left: -5vw;
+}
+
+.partnerL {
+  align-items: flex-end !important;
+}
+
+.partnerR {
+  align-items: flex-start !important;
 }
 
 #teacher {
