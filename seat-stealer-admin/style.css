@@ -200,6 +200,10 @@ body {
   color: #126cad;
 }
 
+.nameRed {
+  color: #d78181;
+}
+
 #overlayContainer {
   display: flex;
   align-items: center;

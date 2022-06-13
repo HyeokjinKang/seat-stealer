@@ -44,7 +44,8 @@ let seats;
 let studentCount = config.studentCount,
   students = config.students,
   display = 0,
-  names = {};
+  names = {},
+  remainCount = 0;
 let voted = [],
   seatVote = {},
   seatFight = [];
@@ -58,24 +59,33 @@ const lightChange = (light) => {
 
 const statusUpdate = (dnum) => {
   const ids = Object.keys(names);
+  let nameArr = [];
+  let allArr = [];
   let text = "";
 
   for (let i = 0; i < ids.length; i++) {
-    let name = names[ids[i]];
-    text += `<span class="names${voted.indexOf(name) != -1 ? " nameBlue" : ""}" onclick="delStudent(${i})">${names[ids[i]]}</span>${i + 1 == ids.length ? "" : ", "}`;
+    if (names[ids[i]][1]) {
+      nameArr.push(names[ids[i]][0]);
+    }
+    allArr.push(names[ids[i]][0]);
+  }
+
+  for (let i = 0; i < students.length; i++) {
+    text += `<span class="names${dnum == 0 ? (nameArr.indexOf(students[i]) != -1 ? " nameBlue" : " nameRed") : voted.indexOf(students[i]) != -1 ? " nameBlue" : " nameRed"}"
+              onclick="delStudent(${allArr.indexOf(students[i]) != -1 ? i : -1})">${students[i]}</span>${i + 1 == students.length ? "" : ", "}`;
   }
   controlExplanation.innerHTML = text;
 
   if (dnum == 0) {
-    controlTitle.textContent = `접속자: ${ids.length}/${studentCount}`;
+    controlTitle.textContent = `접속자: ${remainCount}/${studentCount}`;
   } else if (dnum == 1) {
-    controlTitle.textContent = `접속자: ${ids.length}/${studentCount}, 투표참여: ${voted.length}/${ids.length}`;
+    controlTitle.textContent = `접속자: ${remainCount}/${studentCount}, 투표참여: ${voted.length}/${remainCount}`;
   }
 
-  if (ids.length <= 0 && display != 0) {
+  if (remainCount <= 0 && display != 0) {
     lightChange("gray");
     controlTitle.textContent = "종료됨";
-  } else if (ids.length == studentCount) {
+  } else if (remainCount == studentCount) {
     lightChange("green");
   } else {
     lightChange("yellow");
@@ -83,8 +93,10 @@ const statusUpdate = (dnum) => {
 };
 
 const delStudent = (n) => {
-  const ids = Object.keys(names);
-  socket.emit("removed", ids[n]);
+  if (n != -1) {
+    const ids = Object.keys(names);
+    socket.emit("removed", ids[n]);
+  }
 };
 
 const resultShow = (num) => {
@@ -103,9 +115,10 @@ const resultShow = (num) => {
         seats[n].style.backgroundColor = "#FFE8E8";
       } else {
         socket.emit("seat-confirm", seatVote[n][0], n);
+        students.splice(students.indexOf(names[seatVote[n][0]][0]), 1);
         studentCount--;
         filled.push(n);
-        seats[n].textContent = names[seatVote[n][0]];
+        seats[n].textContent = names[seatVote[n][0]][0];
         seats[n].style.backgroundColor = "#fff";
       }
     } else {
@@ -152,13 +165,13 @@ const next = () => {
     }
   } else if (display == 1) {
     voteLoop.fade(1, 0, 1000);
+    display = 2;
+    attempt++;
+    nextBtn.classList.add("disabled");
+    nextBtn.textContent = "대기중 →";
     setTimeout(() => {
       resultLoop.play();
       resultLoop.fade(0, 1, 1000);
-      display = 2;
-      attempt++;
-      nextBtn.classList.add("disabled");
-      nextBtn.textContent = "대기중 →";
       title.textContent = `${attempt}차 투표 결과`;
       setTimeout(() => {
         resultShow(0);
@@ -176,16 +189,19 @@ const next = () => {
     }
   } else if (display == 3) {
     display = 4;
-    nextBtn.classList.remove("disabled");
+    nextBtn.classList.add("disabled");
     if (remain.length) randomBtn.classList.remove("hidden");
     title.textContent = `${attempt}차 배치 결과`;
+    if (remainCount || remain.length == 0) {
+      nextBtn.classList.remove("disabled");
+    }
     nextBtn.textContent = "진행 →";
   } else if (display == 4) {
     resultLoop.fade(0.5, 0, 1000);
     setTimeout(() => {
       resultLoop.stop();
     }, 1000);
-    if (Object.keys(names).length) {
+    if (remainCount) {
       randomBtn.classList.add("hidden");
       voted = [];
       seatVote = {};
@@ -206,8 +222,16 @@ const next = () => {
 };
 
 const random = () => {
+  const keys = Object.keys(names);
+  for (let i = 0; i < keys.length; i++) {
+    socket.emit("random", keys[i]);
+  }
   randomBtn.classList.add("hidden");
-  const ids = Object.keys(names);
+  let ids = [];
+  for (let i = 0; i < students.length; i++) {
+    names[i] = [students[i], 1];
+    ids[i] = i;
+  }
   seatVote = {};
   for (let i = 0; i < remain.length; i++) {
     const target = Math.floor(Math.random() * ids.length);
@@ -224,7 +248,7 @@ const fightNext = () => {
     let text = "";
     for (let i = 0; i < seatVote[target].length; i++) {
       socket.emit("seat-fight", seatVote[target][i]);
-      text += `<span class="fightName" onclick="winStudent(${i})">${names[seatVote[target][i]]}</span>${i + 1 == seatVote[target].length ? "" : ", "}`;
+      text += `<span class="fightName" onclick="winStudent(${i})">${names[seatVote[target][i]][0]}</span>${i + 1 == seatVote[target].length ? "" : ", "}`;
     }
     fightStudent.innerHTML = text;
     fightContainer.className = "show";
@@ -234,7 +258,7 @@ const fightNext = () => {
     }
     if (remain.length == 1) {
       const keys = Object.keys(names);
-      seats[remain[0]].textContent = names[keys[0]];
+      seats[remain[0]].textContent = names[keys[0]][0];
       socket.emit("seat-confirm", keys[0], remain[0]);
       remain = [];
     }
@@ -255,7 +279,8 @@ const winStudent = (n) => {
     seats[target].style.color = "#000";
     seats[target].style.borderColor = "#df3737";
     socket.emit("seat-confirm", seatVote[target][n], target);
-    seats[target].textContent = names[seatVote[target][n]];
+    students.splice(students.indexOf(names[seatVote[target][n]][0]), 1);
+    seats[target].textContent = names[seatVote[target][n]][0];
     filled.push(target);
     seatVote[target].splice(n, 1);
     socket.emit("seat-wait", seatVote[target]);
@@ -282,10 +307,21 @@ socket.on("connected-admin", () => {
 });
 
 socket.on("name-submit", (name, id) => {
-  const nameArr = Object.values(names);
+  const nameRaw = Object.values(names);
+  let nameArr = [];
+  for (let i = 0; i < nameRaw.length; i++) {
+    nameArr[i] = nameRaw[i][0];
+    nameArr[i + 1] = nameRaw[i][1];
+  }
+  const keyArr = Object.keys(names);
   let result = false;
-  if (students.indexOf(name) != -1 && nameArr.indexOf(name) == -1 && display == 0) {
-    names[id] = name;
+  let nameIndex = nameArr.indexOf(name);
+  if (students.indexOf(name) != -1 && display == 0 && (nameIndex == -1 || (nameIndex != -1 && nameArr[nameIndex + 1] == 0))) {
+    if (nameIndex != -1) {
+      delete names[keyArr[nameIndex / 2]];
+    }
+    names[id] = [name, 1];
+    remainCount++;
     result = true;
     statusUpdate(display);
   }
@@ -293,7 +329,10 @@ socket.on("name-submit", (name, id) => {
 });
 
 socket.on("name-remove", (id) => {
-  delete names[id];
+  if (names[id]) {
+    names[id][1] = 0;
+    remainCount--;
+  }
   statusUpdate(display);
 });
 
@@ -304,10 +343,10 @@ socket.on("seat-vote", (n, id) => {
     } else {
       seatVote[n] = [id];
     }
-    voted.push(names[id]);
+    voted.push(names[id][0]);
     socket.emit("seat-voted", id);
     statusUpdate(display);
-    if (voted.length == Object.keys(names).length) {
+    if (voted.length == remainCount) {
       nextBtn.classList.remove("disabled");
       nextBtn.textContent = "진행 →";
     }

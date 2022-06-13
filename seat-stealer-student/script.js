@@ -46,6 +46,15 @@ socket.on("removed", () => {
   socket.close();
 });
 
+socket.on("random", () => {
+  display = -1;
+  nameBox.style.display = "none";
+  nextBtn.style.display = "none";
+  explanation.textContent = "랜덤자리! TV 화면을 참고해주세요.";
+  lightChange("gray", "종료됨");
+  socket.close();
+});
+
 socket.on("connected-student", () => {
   lightChange("green", "연결됨");
   console.log("Connected as student");
@@ -64,14 +73,16 @@ socket.on("name-result", (result) => {
 });
 
 socket.on("seat-vote-start", (num) => {
-  display = 2;
-  numBox.min = 1;
-  numBox.max = num;
-  nextBtn.textContent = "투표 →";
-  numBox.style.display = "initial";
-  nextBtn.style.display = "initial";
-  explanation.textContent = "원하는 자리의 번호를 입력하세요.";
-  numBox.value = "";
+  if (display != 0) {
+    display = 2;
+    numBox.min = 1;
+    numBox.max = num;
+    nextBtn.textContent = "투표 →";
+    numBox.style.display = "initial";
+    nextBtn.style.display = "initial";
+    explanation.textContent = "원하는 자리의 번호를 입력하세요.";
+    numBox.value = "";
+  }
 });
 
 socket.on("seat-voted", () => {
