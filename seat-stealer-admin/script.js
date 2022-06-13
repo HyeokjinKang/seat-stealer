@@ -155,6 +155,10 @@ const next = () => {
   if (display == 0) {
     display = 1;
     nextBtn.classList.add("disabled");
+    for (let i = 1; i <= config.studentCount; i++) {
+      seats[i].style.backgroundColor = "#fff";
+      seats[i].style.borderColor = "#000";
+    }
     nextBtn.textContent = "대기중 →";
     title.textContent = "원하는 자리에 투표해주세요.";
     socket.emit("seat-vote-start", config.studentCount);
@@ -312,6 +316,7 @@ socket.on("connected-admin", () => {
 
 socket.on("name-submit", (name, id) => {
   const nameRaw = Object.values(names);
+  const seatArr = Object.keys(seatVote);
   let nameArr = [];
   for (let i = 0; i < nameRaw.length; i++) {
     nameArr[2 * i] = nameRaw[i][0];
@@ -322,7 +327,15 @@ socket.on("name-submit", (name, id) => {
   let nameIndex = nameArr.indexOf(name);
   if (students.indexOf(name) != -1 && (nameIndex == -1 || (nameIndex != -1 && nameArr[nameIndex + 1] == 0))) {
     if (nameIndex != -1) {
-      delete names[keyArr[nameIndex / 2]];
+      let key = keyArr[nameIndex / 2];
+      for (let i = 0; i < seatArr.length; i++) {
+        for (let j = 0; j < seatVote[seatArr[i]].length; j++) {
+          if (seatVote[seatArr[i]][j] == key) {
+            seatVote[seatArr[i]][j] = id;
+          }
+        }
+      }
+      delete names[key];
     }
     names[id] = [name, 1];
     remainCount++;
