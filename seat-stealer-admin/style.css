@@ -220,6 +220,10 @@ body {
   font-weight: 400;
 }
 
+#warningContainer {
+  backdrop-filter: blur(3px);
+}
+
 #fightContainer {
   position: fixed;
   top: 0;

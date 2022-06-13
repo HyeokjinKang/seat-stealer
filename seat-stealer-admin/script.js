@@ -80,6 +80,10 @@ const statusUpdate = (dnum) => {
     controlTitle.textContent = `접속자: ${remainCount}/${studentCount}`;
   } else if (dnum == 1) {
     controlTitle.textContent = `접속자: ${remainCount}/${studentCount}, 투표참여: ${voted.length}/${remainCount}`;
+    if (voted.length == remainCount) {
+      nextBtn.classList.remove("disabled");
+      nextBtn.textContent = "진행 →";
+    }
   }
 
   if (remainCount <= 0 && display != 0) {
@@ -310,13 +314,13 @@ socket.on("name-submit", (name, id) => {
   const nameRaw = Object.values(names);
   let nameArr = [];
   for (let i = 0; i < nameRaw.length; i++) {
-    nameArr[i] = nameRaw[i][0];
-    nameArr[i + 1] = nameRaw[i][1];
+    nameArr[2 * i] = nameRaw[i][0];
+    nameArr[2 * i + 1] = nameRaw[i][1];
   }
   const keyArr = Object.keys(names);
   let result = false;
   let nameIndex = nameArr.indexOf(name);
-  if (students.indexOf(name) != -1 && display == 0 && (nameIndex == -1 || (nameIndex != -1 && nameArr[nameIndex + 1] == 0))) {
+  if (students.indexOf(name) != -1 && (nameIndex == -1 || (nameIndex != -1 && nameArr[nameIndex + 1] == 0))) {
     if (nameIndex != -1) {
       delete names[keyArr[nameIndex / 2]];
     }
@@ -346,10 +350,6 @@ socket.on("seat-vote", (n, id) => {
     voted.push(names[id][0]);
     socket.emit("seat-voted", id);
     statusUpdate(display);
-    if (voted.length == remainCount) {
-      nextBtn.classList.remove("disabled");
-      nextBtn.textContent = "진행 →";
-    }
   } else {
     socket.emit("seat-vote-failed", id);
   }
